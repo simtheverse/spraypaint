@@ -3,7 +3,7 @@
 use avian3d::{math::*, prelude::*};
 use bevy::{app::App, prelude::*};
 
-use crate::prelude::random_number;
+use super::prelude::random_number;
 
 // This is an example of the most simple plugin you can write, without
 // having to implement any traits.
