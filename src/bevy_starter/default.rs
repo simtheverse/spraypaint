@@ -18,7 +18,7 @@ pub(crate) fn plugin(app: &mut App) {
                 .set(WindowPlugin {
                     primary_window: Some(Window {
                         title: "Bevy game".into(),
-                        resizable: false,
+                        resizable: true,
                         resolution: (800., 600.).into(),
                         canvas: Some("#bevy".to_owned()),
                         desired_maximum_frame_latency: core::num::NonZero::new(1u32),

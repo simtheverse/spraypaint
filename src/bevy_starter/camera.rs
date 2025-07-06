@@ -8,6 +8,6 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, initialize_camera);
 }
 
-fn initialize_camera(mut commands: Commands) {
+fn initialize_camera(_commands: Commands) {
     //commands.spawn(MainCamera);
 }
