@@ -9,5 +9,5 @@ pub(super) fn plugin(app: &mut App) {
 }
 
 fn initialize_camera(mut commands: Commands) {
-    commands.spawn(MainCamera);
+    //commands.spawn(MainCamera);
 }

@@ -1,12 +1,3 @@
-use bevy::prelude::*;
+pub mod bevy_starter;
 
-mod bevy_starter;
-pub use bevy_starter::prelude::*;
-
-pub struct AppPlugin;
-
-impl Plugin for AppPlugin {
-    fn build(&self, app: &mut App) {
-        bevy_starter::add_all_plugins(app);
-    }
-}
+pub mod simple_scene;

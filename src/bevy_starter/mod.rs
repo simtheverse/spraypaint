@@ -1,3 +1,5 @@
+use bevy::prelude::*;
+
 pub mod asset_tracking;
 pub mod camera;
 pub mod debug;
@@ -9,7 +11,7 @@ pub mod input;
 pub mod physics;
 pub mod utils;
 
-pub fn add_all_plugins(app: &mut bevy::prelude::App) {
+pub fn add_all_plugins(app: &mut App) {
     app.add_plugins(asset_tracking::plugin);
     app.add_plugins(default::plugin);
     app.add_plugins(fonts::plugin);
@@ -23,4 +25,11 @@ pub fn add_all_plugins(app: &mut bevy::prelude::App) {
 
 pub mod prelude {
     pub use super::utils::*;
+}
+
+pub struct AppPlugin;
+impl Plugin for AppPlugin {
+    fn build(&self, app: &mut App) {
+        add_all_plugins(app);
+    }
 }
