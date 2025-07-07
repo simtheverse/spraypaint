@@ -4,6 +4,9 @@ pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, setup);
 }
 
+#[derive(Component)]
+pub struct Block;
+
 /// set up a simple 3D scene
 fn setup(
     mut commands: Commands,
@@ -21,6 +24,7 @@ fn setup(
         Mesh3d(meshes.add(Cuboid::new(1.0, 1.0, 1.0))),
         MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
         Transform::from_xyz(0.0, 0.5, 0.0),
+        Block,
     ));
     // light
     commands.spawn((
