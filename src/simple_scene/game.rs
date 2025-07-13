@@ -55,14 +55,15 @@ fn make_main_character(mut commands: Commands) {
     commands.spawn((
         MainCharacter,
         Transform::from_xyz(0.0, INITIAL_HEIGHT, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
-        CharacterControllerBundle::new(Collider::capsule(0.4, 1.0), Vector::NEG_Y * 9.81 * 0.1).with_movement(
-            30.0,
-            0.92,
-            7.0,
+        CharacterControllerBundle::new(Collider::capsule(0.4, 1.0), Vector::NEG_Y * 9.81 *2.0 ).with_movement(
+            90.0,
+            0.985,
+            7.5,
             (30.0 as Scalar).to_radians(),
         ),
         Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
         Restitution::ZERO.with_combine_rule(CoefficientCombine::Min),
+        TransformInterpolation,
         //GravityScale(0.0),
         )
     );

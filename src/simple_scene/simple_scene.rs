@@ -1,4 +1,4 @@
-use avian3d::prelude::{ColliderConstructorHierarchy, ColliderConstructor, RigidBody};
+use avian3d::prelude::{Collider, ColliderConstructor, RigidBody, TransformInterpolation};
 use bevy::prelude::*;
 
 pub(super) fn plugin(app: &mut App) {
@@ -29,10 +29,15 @@ fn setup(
         MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
         Transform::from_xyz(0.0, 0.5, 0.0),
         Block,
+        Collider::cuboid(1.0, 1.0, 1.0),
+        RigidBody::Dynamic,
+        TransformInterpolation
     ));
     // light
     commands.spawn((
         PointLight {
+            intensity: 2_000_000.0,
+            range: 50.0,
             shadows_enabled: true,
             ..default()
         },
