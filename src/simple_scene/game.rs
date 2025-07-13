@@ -36,6 +36,7 @@ pub(super) fn plugin(app: &mut App) {
     .init_state::<CameraState>()
     .init_state::<AppState>()
     .add_systems(OnEnter(CameraState::StaticView), camera_static_view)
+    .add_systems(OnEnter(CameraState::FirstPersonView), player_translation_reset)
     .add_systems(Update, camera_first_person_view.run_if(in_state(CameraState::FirstPersonView)))
     .add_systems(Update, (set_camera_state));
     println!("games plugin")
@@ -52,7 +53,7 @@ fn make_main_character(mut commands: Commands) {
     commands.spawn((
         MainCharacter,
         Transform::from_xyz(0.0, 2.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
-        CharacterControllerBundle::new(Collider::capsule(0.4, 1.0)).with_movement(
+        CharacterControllerBundle::new(Collider::capsule(0.4, 1.0), Vector::NEG_Y * 9.81 * 0.001).with_movement(
             30.0,
             0.92,
             7.0,
@@ -60,7 +61,7 @@ fn make_main_character(mut commands: Commands) {
         ),
         Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
         Restitution::ZERO.with_combine_rule(CoefficientCombine::Min),
-        GravityScale(0.0),
+        //GravityScale(0.0),
         )
     );
 }
@@ -87,8 +88,15 @@ fn camera_first_person_view(mut main_camera_query: Query<&mut Transform, With<Ma
 }
 
 fn camera_static_view(mut main_camera_query: Query<&mut Transform, With<MainCamera>>) {
-
     if let Ok(mut main_camera_transform) = main_camera_query.single_mut() {
         *main_camera_transform = Transform::from_xyz(0.0, 2.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y);
+    }
+}
+
+
+fn player_translation_reset(main_camera_query: Query<&Transform, With<MainCamera>>, mut main_character_query: Query<&mut Transform,(With<MainCharacter>, Without<MainCamera>)>) {
+    if let Ok(main_camera_transform) = main_camera_query.single() && 
+    let Ok(mut main_character_transform) = main_character_query.single_mut(){   
+        main_character_transform.translation = main_camera_transform.translation;
     }
 }
