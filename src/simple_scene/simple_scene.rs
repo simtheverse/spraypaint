@@ -19,8 +19,7 @@ fn setup(
         Mesh3d(meshes.add(Circle::new(20.0))),
         MeshMaterial3d(materials.add(Color::WHITE)),
         Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
-        SceneRoot::default(),
-        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh),
+        ColliderConstructor::TrimeshFromMesh,
         RigidBody::Static,
     ));
 

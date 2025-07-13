@@ -5,6 +5,8 @@ use bevy::{app::App, prelude::*};
 
 use crate::character_controller::CharacterControllerBundle;
 
+const INITIAL_HEIGHT: f32 = 3.0;
+
 #[derive(Clone, PartialEq, Eq, Hash, Debug, States, Default)]
 enum CameraState {
     #[default]
@@ -52,8 +54,8 @@ pub struct MainCamera;
 fn make_main_character(mut commands: Commands) {
     commands.spawn((
         MainCharacter,
-        Transform::from_xyz(0.0, 2.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
-        CharacterControllerBundle::new(Collider::capsule(0.4, 1.0), Vector::NEG_Y * 9.81 * 0.001).with_movement(
+        Transform::from_xyz(0.0, INITIAL_HEIGHT, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
+        CharacterControllerBundle::new(Collider::capsule(0.4, 1.0), Vector::NEG_Y * 9.81 * 0.1).with_movement(
             30.0,
             0.92,
             7.0,
@@ -69,7 +71,7 @@ fn make_main_character(mut commands: Commands) {
 fn make_main_camera(mut commands: Commands) {
         commands.spawn((
         Camera3d::default(),
-        Transform::from_xyz(0.0, 2.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
+        Transform::from_xyz(0.0, INITIAL_HEIGHT, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
         MainCamera,));
 }
 
@@ -89,7 +91,7 @@ fn camera_first_person_view(mut main_camera_query: Query<&mut Transform, With<Ma
 
 fn camera_static_view(mut main_camera_query: Query<&mut Transform, With<MainCamera>>) {
     if let Ok(mut main_camera_transform) = main_camera_query.single_mut() {
-        *main_camera_transform = Transform::from_xyz(0.0, 2.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y);
+        *main_camera_transform = Transform::from_xyz(0.0, INITIAL_HEIGHT, 8.0).looking_at(Vec3::ZERO, Vec3::Y);
     }
 }
 
