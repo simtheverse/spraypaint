@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
 pub mod asset_tracking;
-pub mod camera;
 pub mod debug;
 pub mod default;
 pub mod dev_tools;
@@ -15,7 +14,6 @@ pub fn add_all_plugins(app: &mut App) {
     app.add_plugins(asset_tracking::plugin);
     app.add_plugins(default::plugin);
     app.add_plugins(fonts::plugin);
-    app.add_plugins(camera::plugin);
     app.add_plugins(physics::plugin);
     app.add_plugins(input::plugin);
     app.add_plugins(game::plugin);

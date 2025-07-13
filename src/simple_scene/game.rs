@@ -3,7 +3,7 @@
 use avian3d::{math::*, prelude::*};
 use bevy::{app::App, prelude::*};
 
-use crate::bevy_starter::camera::MainCamera;
+use crate::character_controller::CharacterControllerBundle;
 
 #[derive(Clone, PartialEq, Eq, Hash, Debug, States, Default)]
 enum CameraState {
@@ -32,6 +32,7 @@ pub(super) fn plugin(app: &mut App) {
     // Your game logic here
     app
     .add_systems(Startup, (make_main_character))
+    .add_systems(Startup, make_main_camera)
     .init_state::<CameraState>()
     .init_state::<AppState>()
     .add_systems(OnEnter(CameraState::StaticView), camera_static_view)
@@ -43,11 +44,32 @@ pub(super) fn plugin(app: &mut App) {
 #[derive(Component)]
 struct MainCharacter;
 
+#[derive(Component)]
+#[require(Camera3d)]
+pub struct MainCamera;
+
 fn make_main_character(mut commands: Commands) {
     commands.spawn((
         MainCharacter,
-        Transform::default()
-    ));
+        Transform::from_xyz(0.0, 2.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
+        CharacterControllerBundle::new(Collider::capsule(0.4, 1.0)).with_movement(
+            30.0,
+            0.92,
+            7.0,
+            (30.0 as Scalar).to_radians(),
+        ),
+        Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
+        Restitution::ZERO.with_combine_rule(CoefficientCombine::Min),
+        GravityScale(0.0),
+        )
+    );
+}
+
+fn make_main_camera(mut commands: Commands) {
+        commands.spawn((
+        Camera3d::default(),
+        Transform::from_xyz(0.0, 2.0, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
+        MainCamera,));
 }
 
 fn set_camera_state(mut next_state: ResMut<NextState<CameraState>>, current_state: Res<State<CameraState>>, keyboard_input: Res<ButtonInput<KeyCode>>) {

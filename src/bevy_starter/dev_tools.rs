@@ -10,7 +10,7 @@ pub(crate) fn plugin(app: &mut App) {
     app.add_systems(Update, toggle_system);
 }
 
-const TOGGLE_KEY: KeyCode = KeyCode::Enter;
+const TOGGLE_KEY: KeyCode = KeyCode::Numpad1;
 
 fn toggle_debug_ui(mut options: ResMut<UiDebugOptions>) {
     options.toggle();

@@ -4,10 +4,6 @@ use bevy::window::Window;
 use bevy::input::keyboard::KeyCode;
 
 #[derive(Component)]
-#[require(Camera3d)]
-pub struct MainCamera;
-
-#[derive(Component)]
 pub struct FlyCameraController {
     pub speed: f32,
     pub sensitivity: f32,
