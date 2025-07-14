@@ -1,4 +1,8 @@
 /// Got this from https://github.com/Jondolf/avian/blob/1c93e6c7d1194ea213293d49909e72f02cbdba64/crates/avian3d/examples/kinematic_character_3d/plugin.rs
+/// 
+/// With my modifications
+/// 
+
 use avian3d::{
     math::*,
     prelude::{NarrowPhaseSet, *},
@@ -227,6 +231,7 @@ fn movement(
         &MovementAcceleration,
         &JumpImpulse,
         &mut LinearVelocity,
+        &mut Transform,
         Has<Grounded>,
     )>,
 ) {
@@ -235,13 +240,15 @@ fn movement(
     let delta_time = time.delta_secs_f64().adjust_precision();
 
     for event in movement_event_reader.read() {
-        for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
+        for (movement_acceleration, jump_impulse, mut linear_velocity, transform, is_grounded) in
             &mut controllers
         {
             match event {
                 MovementAction::Move(direction) => {
-                    linear_velocity.x += direction.x * movement_acceleration.0 * delta_time;
-                    linear_velocity.z -= direction.y * movement_acceleration.0 * delta_time;
+                    // Convert input direction to local space
+                    let local_dir = transform.rotation * Vec3::new(direction.x, 0.0, -direction.y);
+                    linear_velocity.x += local_dir.x * movement_acceleration.0 * delta_time;
+                    linear_velocity.z += local_dir.z * movement_acceleration.0 * delta_time;
                 }
                 MovementAction::Jump => {
                     if is_grounded {

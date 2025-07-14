@@ -40,18 +40,19 @@ pub(super) fn plugin(app: &mut App) {
     .add_systems(OnEnter(CameraState::StaticView), camera_static_view)
     .add_systems(OnEnter(CameraState::FirstPersonView), player_translation_reset)
     .add_systems(Update, camera_first_person_view.run_if(in_state(CameraState::FirstPersonView)))
+    .add_systems(Update, align_player_forward_vector_with_camera.run_if(in_state(CameraState::FirstPersonView)))
     .add_systems(Update, (set_camera_state));
     println!("games plugin")
 }
 
 #[derive(Component)]
-struct MainCharacter;
+pub struct MainCharacter;
 
 #[derive(Component)]
 #[require(Camera3d)]
 pub struct MainCamera;
 
-fn make_main_character(mut commands: Commands) {
+pub fn make_main_character(mut commands: Commands) {
     commands.spawn((
         MainCharacter,
         Transform::from_xyz(0.0, INITIAL_HEIGHT, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
@@ -63,13 +64,14 @@ fn make_main_character(mut commands: Commands) {
         ),
         Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
         Restitution::ZERO.with_combine_rule(CoefficientCombine::Min),
-        TransformInterpolation,
+        //TransformInterpolation,
+        LockedAxes::from_bits(0b000_100)
         //GravityScale(0.0),
         )
     );
 }
 
-fn make_main_camera(mut commands: Commands) {
+pub fn make_main_camera(mut commands: Commands) {
         commands.spawn((
         Camera3d::default(),
         Transform::from_xyz(0.0, INITIAL_HEIGHT, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
@@ -101,5 +103,13 @@ fn player_translation_reset(main_camera_query: Query<&Transform, With<MainCamera
     if let Ok(main_camera_transform) = main_camera_query.single() && 
     let Ok(mut main_character_transform) = main_character_query.single_mut(){   
         main_character_transform.translation = main_camera_transform.translation;
+    }
+}
+
+fn align_player_forward_vector_with_camera(main_camera_query: Query<&Transform, With<MainCamera>>, mut main_character_query: Query<&mut Transform, (With<MainCharacter>, Without<MainCamera>)>) {
+    if let Ok(main_camera_transform) = main_camera_query.single() &&
+    let Ok(mut main_character_transform) = main_character_query.single_mut(){
+        let (mut yaw, _, _) = main_camera_transform.rotation.to_euler(EulerRot::YXZ);
+        main_character_transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, 0.0, 0.0)
     }
 }
