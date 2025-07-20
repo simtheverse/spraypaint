@@ -8,6 +8,7 @@ use avian3d::{
     prelude::{NarrowPhaseSet, *},
 };
 use bevy::{ecs::query::Has, prelude::*};
+use crate::simple_scene::game::CameraState;
 
 pub struct CharacterControllerPlugin;
 
@@ -17,11 +18,11 @@ impl Plugin for CharacterControllerPlugin {
             .add_systems(
                 Update,
                 (
-                    keyboard_input,
-                    gamepad_input,
+                    keyboard_input.run_if(in_state(CameraState::FirstPersonView)),
+                    gamepad_input.run_if(in_state(CameraState::FirstPersonView)),
                     update_grounded,
                     apply_gravity,
-                    movement,
+                    movement.run_if(in_state(CameraState::FirstPersonView)),
                     apply_movement_damping,
                 )
                     .chain(),
@@ -247,8 +248,16 @@ fn movement(
                 MovementAction::Move(direction) => {
                     // Convert input direction to local space
                     let local_dir = transform.rotation * Vec3::new(direction.x, 0.0, -direction.y);
-                    linear_velocity.x += local_dir.x * movement_acceleration.0 * delta_time;
-                    linear_velocity.z += local_dir.z * movement_acceleration.0 * delta_time;
+
+                    // We need to normalize and scale because otherwise
+                    // diagonal movement would be faster than horizontal or vertical movement.
+                    // We use `clamp_length_max` instead of `.normalize_or_zero()` because gamepad input
+                    // may be smaller than 1.0 when the player is pushing the stick just a little bit.
+                    let local_dir_clamp = local_dir.clamp_length_max(1.0);
+
+                    linear_velocity.x += local_dir_clamp.x * movement_acceleration.0 * delta_time;
+                    linear_velocity.z += local_dir_clamp.z * movement_acceleration.0 * delta_time;
+
                 }
                 MovementAction::Jump => {
                     if is_grounded {

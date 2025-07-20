@@ -8,7 +8,7 @@ use crate::character_controller::CharacterControllerBundle;
 const INITIAL_HEIGHT: f32 = 3.0;
 
 #[derive(Clone, PartialEq, Eq, Hash, Debug, States, Default)]
-enum CameraState {
+pub enum CameraState {
     #[default]
     StaticView,
     FirstPersonView,
@@ -33,8 +33,8 @@ enum AppState {
 pub(super) fn plugin(app: &mut App) {
     // Your game logic here
     app
-    .add_systems(Startup, (make_main_character))
-    .add_systems(Startup, make_main_camera)
+    .add_systems(Startup, (spawn_main_character))
+    .add_systems(Startup, spawn_main_camera)
     .init_state::<CameraState>()
     .init_state::<AppState>()
     .add_systems(OnEnter(CameraState::StaticView), camera_static_view)
@@ -52,7 +52,7 @@ pub struct MainCharacter;
 #[require(Camera3d)]
 pub struct MainCamera;
 
-pub fn make_main_character(mut commands: Commands) {
+pub fn spawn_main_character(mut commands: Commands) {
     commands.spawn((
         MainCharacter,
         Transform::from_xyz(0.0, INITIAL_HEIGHT, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
@@ -71,7 +71,7 @@ pub fn make_main_character(mut commands: Commands) {
     );
 }
 
-pub fn make_main_camera(mut commands: Commands) {
+pub fn spawn_main_camera(mut commands: Commands) {
         commands.spawn((
         Camera3d::default(),
         Transform::from_xyz(0.0, INITIAL_HEIGHT, 8.0).looking_at(Vec3::ZERO, Vec3::Y),
