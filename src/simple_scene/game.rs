@@ -39,8 +39,8 @@ pub(super) fn plugin(app: &mut App) {
     .init_state::<AppState>()
     .add_systems(OnEnter(CameraState::StaticView), camera_static_view)
     .add_systems(OnEnter(CameraState::FirstPersonView), player_translation_reset)
-    .add_systems(Update, camera_first_person_view.run_if(in_state(CameraState::FirstPersonView)))
-    .add_systems(Update, align_player_forward_vector_with_camera.run_if(in_state(CameraState::FirstPersonView)))
+    .add_systems(PostUpdate, camera_first_person_view.run_if(in_state(CameraState::FirstPersonView)))
+    .add_systems(PreUpdate, align_player_forward_vector_with_camera.run_if(in_state(CameraState::FirstPersonView)))
     .add_systems(Update, (set_camera_state));
     println!("games plugin")
 }
