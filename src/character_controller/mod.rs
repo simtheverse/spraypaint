@@ -8,7 +8,7 @@ use avian3d::{
     prelude::{NarrowPhaseSet, *},
 };
 use bevy::{ecs::query::Has, prelude::*};
-use crate::simple_scene::game::CameraState;
+use crate::simple_scene::game::{CameraState, MainCamera};
 
 pub struct CharacterControllerPlugin;
 
@@ -232,22 +232,24 @@ fn movement(
         &MovementAcceleration,
         &JumpImpulse,
         &mut LinearVelocity,
-        &mut Transform,
         Has<Grounded>,
     )>,
+    main_camera: Single<&Transform, With<MainCamera>>
 ) {
+
+    let camera_transform = main_camera.into_inner();
     // Precision is adjusted so that the example works with
     // both the `f32` and `f64` features. Otherwise you don't need this.
     let delta_time = time.delta_secs_f64().adjust_precision();
 
     for event in movement_event_reader.read() {
-        for (movement_acceleration, jump_impulse, mut linear_velocity, transform, is_grounded) in
+        for (movement_acceleration, jump_impulse, mut linear_velocity, is_grounded) in
             &mut controllers
         {
             match event {
                 MovementAction::Move(direction) => {
                     // Convert input direction to local space
-                    let local_dir = transform.rotation * Vec3::new(direction.x, 0.0, -direction.y);
+                    let local_dir = camera_transform.rotation * Vec3::new(direction.x, 0.0, -direction.y);
 
                     // We need to normalize and scale because otherwise
                     // diagonal movement would be faster than horizontal or vertical movement.
@@ -255,8 +257,7 @@ fn movement(
                     // may be smaller than 1.0 when the player is pushing the stick just a little bit.
                     let local_dir_clamp = local_dir.clamp_length_max(1.0);
 
-                    linear_velocity.x += local_dir_clamp.x * movement_acceleration.0 * delta_time;
-                    linear_velocity.z += local_dir_clamp.z * movement_acceleration.0 * delta_time;
+                    linear_velocity.0 += local_dir_clamp * movement_acceleration.0 * delta_time;
 
                 }
                 MovementAction::Jump => {

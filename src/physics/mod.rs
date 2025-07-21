@@ -2,7 +2,7 @@
 
 use avian3d::prelude::*;
 use bevy::{
-    diagnostic::FrameTimeDiagnosticsPlugin, input::common_conditions::input_just_pressed,
+    input::common_conditions::input_just_pressed,
     prelude::*,
 };
 

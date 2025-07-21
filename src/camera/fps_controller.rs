@@ -30,8 +30,6 @@ fn setup(_commands: Commands, player_entity_query: Query<Entity, With<MainCamera
     //commands.entity(player_entity).insert(CameraSensitivity::default());
 }
 
-use std::f32::consts::FRAC_PI_2;
-
 use bevy::window::{CursorGrabMode, PrimaryWindow};
 /// Handles looking around if cursor is locked
 fn set_look_at(
@@ -44,8 +42,6 @@ fn set_look_at(
         for mut transform in query.iter_mut() {
             for ev in state.read() {
                 let (mut yaw, mut pitch, _) = transform.rotation.to_euler(EulerRot::YXZ);
-                let mut delta_pitch= 0.0;
-                let mut delta_yaw= 0.0;
                 match window.cursor_options.grab_mode {
                     CursorGrabMode::None => (),
                     _ => {

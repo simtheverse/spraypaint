@@ -39,8 +39,7 @@ pub(super) fn plugin(app: &mut App) {
     .init_state::<AppState>()
     .add_systems(OnEnter(CameraState::StaticView), camera_static_view)
     .add_systems(OnEnter(CameraState::FirstPersonView), player_translation_reset)
-    .add_systems(PostUpdate, camera_first_person_view.run_if(in_state(CameraState::FirstPersonView)))
-    .add_systems(PreUpdate, align_player_forward_vector_with_camera.run_if(in_state(CameraState::FirstPersonView)))
+    .add_systems(PostUpdate, camera_first_person_view.before(TransformSystem::TransformPropagate).run_if(in_state(CameraState::FirstPersonView)))
     .add_systems(Update, (set_camera_state));
     println!("games plugin")
 }
@@ -64,7 +63,7 @@ pub fn spawn_main_character(mut commands: Commands) {
         ),
         Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
         Restitution::ZERO.with_combine_rule(CoefficientCombine::Min),
-        //TransformInterpolation,
+        TransformInterpolation,
         LockedAxes::from_bits(0b000_100)
         //GravityScale(0.0),
         )
@@ -103,13 +102,5 @@ fn player_translation_reset(main_camera_query: Query<&Transform, With<MainCamera
     if let Ok(main_camera_transform) = main_camera_query.single() && 
     let Ok(mut main_character_transform) = main_character_query.single_mut(){   
         main_character_transform.translation = main_camera_transform.translation;
-    }
-}
-
-fn align_player_forward_vector_with_camera(main_camera_query: Query<&Transform, With<MainCamera>>, mut main_character_query: Query<&mut Transform, (With<MainCharacter>, Without<MainCamera>)>) {
-    if let Ok(main_camera_transform) = main_camera_query.single() &&
-    let Ok(mut main_character_transform) = main_character_query.single_mut(){
-        let (mut yaw, _, _) = main_camera_transform.rotation.to_euler(EulerRot::YXZ);
-        main_character_transform.rotation = Quat::from_euler(EulerRot::YXZ, yaw, 0.0, 0.0)
     }
 }
