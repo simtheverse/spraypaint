@@ -251,13 +251,7 @@ fn movement(
                     // Convert input direction to local space
                     let local_dir = camera_transform.rotation * Vec3::new(direction.x, 0.0, -direction.y);
 
-                    // We need to normalize and scale because otherwise
-                    // diagonal movement would be faster than horizontal or vertical movement.
-                    // We use `clamp_length_max` instead of `.normalize_or_zero()` because gamepad input
-                    // may be smaller than 1.0 when the player is pushing the stick just a little bit.
-                    let local_dir_clamp = local_dir.clamp_length_max(1.0);
-
-                    linear_velocity.0 += local_dir_clamp * movement_acceleration.0 * delta_time;
+                    linear_velocity.0 += local_dir * movement_acceleration.0 * delta_time;
 
                 }
                 MovementAction::Jump => {

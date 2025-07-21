@@ -4,7 +4,7 @@ use crate::simple_scene::game::{MainCamera, spawn_main_camera};
 
 pub(super) fn plugin(app: &mut App) {
     app.add_systems(Startup, setup.after(spawn_main_camera));
-    app.add_systems(Update, set_look_at);
+    app.add_systems(PreUpdate, set_look_at);
     app.init_resource::<MovementSettings>();
     app.add_systems(Update, cursor_grab);
 }
