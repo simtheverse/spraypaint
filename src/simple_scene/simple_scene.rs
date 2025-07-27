@@ -16,10 +16,9 @@ fn setup(
 ) {
     // circular base
     commands.spawn((
-        Mesh3d(meshes.add(Circle::new(20.0))),
+        Mesh3d(meshes.add(Cylinder::new(20.0, 0.5))),
         MeshMaterial3d(materials.add(Color::WHITE)),
-        Transform::from_rotation(Quat::from_rotation_x(-std::f32::consts::FRAC_PI_2)),
-        ColliderConstructor::TrimeshFromMesh,
+        ColliderConstructor::Cylinder { radius: (20.0), height: (0.5) },
         RigidBody::Static,
     ));
 
