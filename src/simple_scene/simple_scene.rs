@@ -15,21 +15,24 @@ fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     // circular base
+    let ground=Vec2::new(20.0, 0.5);
     commands.spawn((
-        Mesh3d(meshes.add(Cylinder::new(20.0, 0.5))),
+        Mesh3d(meshes.add(Cylinder::new(ground.x, ground.y))),
         MeshMaterial3d(materials.add(Color::WHITE)),
-        ColliderConstructor::Cylinder { radius: (20.0), height: (0.5) },
+        ColliderConstructor::Cylinder { radius: (ground.x), height: (ground.y) },
         RigidBody::Static,
     ));
 
-    // cube
+    // Wall
+    // Define the cuboid dimensions
+    let cuboid_size = Vec3::new(10.0, 2.0, 0.2);    
     commands.spawn((
-        Mesh3d(meshes.add(Cuboid::new(1.0, 1.0, 1.0))),
+        Mesh3d(meshes.add(Cuboid::new(cuboid_size.x, cuboid_size.y, cuboid_size.z))),
         MeshMaterial3d(materials.add(Color::srgb_u8(124, 144, 255))),
-        Transform::from_xyz(0.0, 0.5, 0.0),
+        Transform::from_xyz(0.0, ground.y/2.0+cuboid_size.y/2.0, 0.0),
         Block,
-        Collider::cuboid(1.0, 1.0, 1.0),
-        RigidBody::Dynamic,
+        Collider::cuboid(cuboid_size.x, cuboid_size.y, cuboid_size.z),
+        RigidBody::Static,
         TransformInterpolation
     ));
     // light
