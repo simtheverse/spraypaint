@@ -8,7 +8,7 @@ use avian3d::{
     prelude::{NarrowPhaseSet, *},
 };
 use bevy::{ecs::query::Has, prelude::*};
-use crate::simple_scene::game::{CameraState, MainCamera};
+use crate::simple_scene::game::{CameraState, MainCamera, MainCharacter};
 
 pub struct CharacterControllerPlugin;
 
@@ -233,7 +233,7 @@ fn movement(
         &JumpImpulse,
         &mut LinearVelocity,
         Has<Grounded>,
-    )>,
+    ), With<MainCharacter>>,
     main_camera: Single<&Transform, With<MainCamera>>
 ) {
 
@@ -251,12 +251,13 @@ fn movement(
                     // Convert input direction to local space
                     let local_dir = camera_transform.rotation * Vec3::new(direction.x, 0.0, -direction.y);
 
-                    linear_velocity.0 += local_dir * movement_acceleration.0 * delta_time;
+                    linear_velocity.x += local_dir.x * movement_acceleration.0 * delta_time;
+                    linear_velocity.z += local_dir.z * movement_acceleration.0 * delta_time;
 
                 }
                 MovementAction::Jump => {
                     if is_grounded {
-                        linear_velocity.y = jump_impulse.0;
+                        linear_velocity.y += jump_impulse.0;
                     }
                 }
             }
